@@ -1,7 +1,6 @@
 <?php namespace ChatScribe;
 
 class Plugin {
-
     public function __construct() {
         $this->init();
     }
@@ -9,8 +8,9 @@ class Plugin {
     public function init() {
         new Activation();
         new Deactivation();
+        new Abilities\Query();
         new AI\Client();
-        new Api\Chat();
+        new API\Chat();
         new Shortcodes\Chat();
         $this->renderShortcode();
     }

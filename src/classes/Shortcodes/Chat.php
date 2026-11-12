@@ -2,224 +2,59 @@
 
 class Chat {
 
+    const HANDLE = 'chatscribe-chat';
+
     public function __construct() {
         add_shortcode( 'chatscribe', [$this, 'render_shortcode'] );
+        add_action( 'wp_enqueue_scripts', [$this, 'register_assets'] );
+    }
+
+    // Registers the chat CSS and JS. They only load when the shortcode renders.
+    public function register_assets() {
+        $css = 'src/assets/css/chat.css';
+        $js  = 'src/assets/js/chat.js';
+        $dir = plugin_dir_path( CHATSCRIBE_FILE );
+
+        wp_register_style(
+            self::HANDLE,
+            plugins_url( $css, CHATSCRIBE_FILE ),
+            [],
+            filemtime( $dir . $css )
+        );
+
+        wp_register_script(
+            self::HANDLE,
+            plugins_url( $js, CHATSCRIBE_FILE ),
+            [],
+            filemtime( $dir . $js ),
+            true
+        );
+
+        // Hands PHP values to the JS as window.ChatScribe.
+        wp_localize_script( self::HANDLE, 'ChatScribe', [
+            'restUrl' => esc_url_raw( rest_url( \ChatScribe\API\Chat::CHAT_REST_NAME ) ),
+            'nonce'    => wp_create_nonce( 'wp_rest' ),
+            'siteName'      => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
+            'assistantName' => self::get_assistant_name(),
+        ] );
+    }
+
+    // "{Site name} AI Assistant", so the chat carries each site's own identity.
+    public static function get_assistant_name() {
+        $site_name = trim( wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) );
+        return $site_name ? $site_name . ' AI Assistant' : 'AI Assistant';
     }
 
     public function render_shortcode( $atts ) {
+        wp_enqueue_style( self::HANDLE );
+        wp_enqueue_script( self::HANDLE );
+
         ob_start();
         ?>
-        <style>
-            #chatscribeChat {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 340px;
-                max-width: calc(100vw - 32px);
-                height: 460px;
-                max-height: calc(100vh - 40px);
-                display: flex;
-                flex-direction: column;
-                background: #ffffff;
-                border-radius: 16px;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-                overflow: hidden;
-                z-index: 9999;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                font-size: 14px;
-                line-height: 1.4;
-                color: #1f2937;
-                box-sizing: border-box;
-            }
-            #chatscribeChat *,
-            #chatscribeChat *::before,
-            #chatscribeChat *::after {
-                box-sizing: border-box;
-            }
-
-            /* Header */
-            #chatscribeChat .chatscribe-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 14px 16px;
-                background: #4f46e5;
-                color: #ffffff;
-            }
-            #chatscribeChat .chatscribe-title {
-                margin: 0;
-                font-size: 15px;
-                font-weight: 600;
-            }
-            #chatscribeClose {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 28px;
-                height: 28px;
-                padding: 0;
-                background: transparent;
-                color: #ffffff;
-                border: none;
-                border-radius: 50%;
-                cursor: pointer;
-                transition: background 0.15s ease;
-            }
-            #chatscribeClose:hover {
-                background: rgba(255, 255, 255, 0.2);
-            }
-
-            /* Message box */
-            #chatscribeMessages {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                padding: 16px;
-                overflow-y: auto;
-                background: #f5f6fa;
-            }
-            #chatscribeChat .chatscribe-message {
-                max-width: 80%;
-                margin: 0;
-                padding: 9px 13px;
-                border-radius: 16px;
-                word-wrap: break-word;
-            }
-            #chatscribeChat .chatscribe-message--bot {
-                align-self: flex-start;
-                background: #ffffff;
-                border: 1px solid #e5e7eb;
-                border-bottom-left-radius: 4px;
-            }
-            #chatscribeChat .chatscribe-message--user {
-                align-self: flex-end;
-                background: #4f46e5;
-                color: #ffffff;
-                border-bottom-right-radius: 4px;
-            }
-
-            /* Input row */
-            #chatscribeChat .chatscribe-input-row {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 12px;
-                background: #ffffff;
-                border-top: 1px solid #e5e7eb;
-            }
-            #chatscribeInput {
-                flex: 1;
-                min-width: 0;
-                height: 40px;
-                margin: 0;
-                padding: 0 14px;
-                font: inherit;
-                color: inherit;
-                background: #f5f6fa;
-                border: 1px solid #e5e7eb;
-                border-radius: 20px;
-                outline: none;
-                transition: border-color 0.15s ease, box-shadow 0.15s ease;
-            }
-            #chatscribeInput:focus {
-                border-color: #4f46e5;
-                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-            }
-            #chatscribeSend {
-                flex-shrink: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 40px;
-                height: 40px;
-                padding: 0;
-                background: transparent;
-                color: #4f46e5;
-                border: none;
-                border-radius: 50%;
-                cursor: pointer;
-                transition: color 0.15s ease, transform 0.15s ease;
-            }
-            #chatscribeSend:hover {
-                color: #4338ca;
-                transform: scale(1.08);
-            }
-            #chatscribeSend:focus-visible,
-            #chatscribeClose:focus-visible {
-                outline: 2px solid #4f46e5;
-                outline-offset: 2px;
-            }
-            #chatscribeClose:focus-visible {
-                outline-color: #ffffff;
-            }
-        </style>
-
-        <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', function() {
-                const chatContainer = document.getElementById('chatscribeChat');
-                const closeButton = document.getElementById('chatscribeClose');
-                const sendButton = document.getElementById('chatscribeSend');
-                const inputField = document.getElementById('chatscribeInput');
-                const messagesContainer = document.getElementById('chatscribeMessages');
-
-                // Close chat functionality
-                closeButton.addEventListener('click', function() {
-                    chatContainer.style.display = 'none';
-                });
-
-                // Send message functionality
-                sendButton.addEventListener('click', sendMessage);
-                inputField.addEventListener('keypress', function(event) {
-                    if (event.key === 'Enter') {
-                        sendMessage();
-                    }
-                });
-
-                function sendMessage() {
-                    const userMessage = inputField.value.trim();
-                    if (userMessage) {
-                        console.log('test', userMessage);
-                        appendMessage(userMessage, 'user');
-                        inputField.value = '';
-                        setTimeout(() => {
-                            fetch( "<?php echo esc_js( 'wp-json/' . \ChatScribe\Api\Chat::CHAT_REST_NAME ); ?>", {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ message: userMessage }),
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log('data', data); 
-                                if (data.status === 'success') {
-                                    appendMessage(data.message, 'bot');
-                                } else {
-                                    appendMessage("Sorry, there was an error processing your message.", 'bot');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                appendMessage("Sorry, there was an error processing your message.", 'bot');
-                            });
-                        }, 1000);
-                    }
-                }
-
-                function appendMessage(message, sender) {
-                    const messageElement = document.createElement('p');
-                    messageElement.classList.add('chatscribe-message', `chatscribe-message--${sender}`);
-                    messageElement.textContent = message;
-                    messagesContainer.appendChild(messageElement);
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }
-            });
-        </script>
         // it goes to gra 
         <div id="chatscribeChat">
             <div class="chatscribe-header">
-                <p class="chatscribe-title">ChatScribe</p>
+                <p class="chatscribe-title"><?php echo esc_html( self::get_assistant_name() ); ?></p>
                 <button type="button" id="chatscribeClose" aria-label="Close chat">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
                         <path d="M6 6l12 12M18 6L6 18"/>
@@ -228,7 +63,7 @@ class Chat {
             </div>
 
             <div id="chatscribeMessages">
-                <p class="chatscribe-message chatscribe-message--bot">Welcome to ChatScribe! How can I help?</p>
+                <p id="chatscribeGreeting" class="chatscribe-message chatscribe-message--bot">Hi there! How can I help?</p>
             </div>
 
             <div class="chatscribe-input-row">
