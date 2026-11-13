@@ -1,6 +1,7 @@
 <?php namespace ChatScribe\AI;
 
 use WordPress\AiClient\Messages\DTO\UserMessage;
+use WordPress\AiClient\Messages\DTO\ModelMessage;
 use WordPress\AiClient\Messages\DTO\MessagePart;
 
 class Client {
@@ -25,9 +26,18 @@ class Client {
         $this->messages             = [];
     }
 
-    public function sendMessage( string $message ) {
-        // Add your messages to messages.
-        $this->messages = [ new UserMessage( [ new MessagePart( $message ) ] ) ];
+    /**
+     * @param string $message The visitor's new message.
+     * @param array  $history Earlier turns, oldest first, each [ 'role' => 'user'|'bot', 'text' => string ].
+     */
+    public function sendMessage( string $message, array $history = [] ) {
+        // Earlier turns first, so the model remembers the conversation, then the new message.
+        $this->messages = [];
+        foreach ( $history as $turn ) {
+            $part = [ new MessagePart( $turn['text'] ) ];
+            $this->messages[] = 'user' === $turn['role'] ? new UserMessage( $part ) : new ModelMessage( $part );
+        }
+        $this->messages[] = new UserMessage( [ new MessagePart( $message ) ] );
         error_log( 'AI Request: ' . print_r( $this->messages, true ) );
 
         if ( !function_exists('wp_ai_client_prompt') ) {

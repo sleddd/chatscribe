@@ -55,11 +55,18 @@ class Chat {
         <div id="chatscribeChat">
             <div class="chatscribe-header">
                 <p class="chatscribe-title"><?php echo esc_html( self::get_assistant_name() ); ?></p>
-                <button type="button" id="chatscribeClose" aria-label="Close chat">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-                        <path d="M6 6l12 12M18 6L6 18"/>
-                    </svg>
-                </button>
+                <div class="chatscribe-actions">
+                    <button type="button" id="chatscribeClear" aria-label="Clear conversation" title="Clear conversation">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>
+                        </svg>
+                    </button>
+                    <button type="button" id="chatscribeClose" aria-label="Close chat" title="Close chat">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                            <path d="M6 6l12 12M18 6L6 18"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <div id="chatscribeMessages">

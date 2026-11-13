@@ -39,6 +39,12 @@
     font-size: 15px;
     font-weight: 600;
 }
+#chatscribeChat .chatscribe-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+#chatscribeClear,
 #chatscribeClose {
     display: flex;
     align-items: center;
@@ -53,6 +59,7 @@
     cursor: pointer;
     transition: background 0.15s ease;
 }
+#chatscribeClear:hover,
 #chatscribeClose:hover {
     background: rgba(255, 255, 255, 0.2);
 }
@@ -195,10 +202,12 @@
     transform: scale(1.08);
 }
 #chatscribeSend:focus-visible,
+#chatscribeClear:focus-visible,
 #chatscribeClose:focus-visible {
     outline: 2px solid #4f46e5;
     outline-offset: 2px;
 }
+#chatscribeClear:focus-visible,
 #chatscribeClose:focus-visible {
     outline-color: #ffffff;
 }

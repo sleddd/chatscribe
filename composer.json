@@ -9,5 +9,8 @@
     "psr-4": {
       "ChatScribe\\": "src/classes/"
     }
+  },
+  "config": {
+    "autoloader-suffix": "ChatScribe"
   }
 }

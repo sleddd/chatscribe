@@ -1,10 +1,38 @@
 document.addEventListener('DOMContentLoaded', function() {
     const chatContainer = document.getElementById('chatscribeChat');
     const closeButton = document.getElementById('chatscribeClose');
+    const clearButton = document.getElementById('chatscribeClear');
     const sendButton = document.getElementById('chatscribeSend');
     const inputField = document.getElementById('chatscribeInput');
     const messagesContainer = document.getElementById('chatscribeMessages');
     const greetingElement = document.getElementById('chatscribeGreeting');
+
+    // The conversation so far. Sent with each message so the assistant remembers it,
+    // and kept in sessionStorage so it survives moving between pages in this tab.
+    const HISTORY_KEY = 'chatscribeHistory';
+    const HISTORY_LIMIT = 12;
+    let history = loadHistory();
+    // Goes up each time the conversation is cleared, so a reply still on its way is dropped.
+    let conversation = 0;
+
+    function loadHistory() {
+        try {
+            const saved = JSON.parse(sessionStorage.getItem(HISTORY_KEY));
+            return Array.isArray(saved) ? saved.filter(turn => turn && typeof turn.text === 'string') : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function remember(role, text) {
+        history.push({ role: role, text: text });
+        history = history.slice(-HISTORY_LIMIT);
+        try {
+            sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        } catch (error) {
+            // Storage unavailable: the conversation still lasts until the page is left.
+        }
+    }
 
     // Time-aware greeting, based on the visitor's own clock.
     if (greetingElement) {
@@ -28,6 +56,28 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${timeOfDay}!${welcome} How can I help you today?`;
     }
 
+    // Show the conversation again after a page change.
+    history.forEach(turn => appendMessage(turn.text, turn.role === 'user' ? 'user' : 'bot'));
+
+    // Clear the conversation: forget it, and empty the window back to the greeting.
+    if (clearButton) {
+        clearButton.addEventListener('click', function() {
+            conversation++;
+            history = [];
+            try {
+                sessionStorage.removeItem(HISTORY_KEY);
+            } catch (error) {
+                // Nothing was stored.
+            }
+            Array.from(messagesContainer.children).forEach(function(element) {
+                if (element !== greetingElement) {
+                    element.remove();
+                }
+            });
+            inputField.focus();
+        });
+    }
+
     // Close chat functionality
     closeButton.addEventListener('click', function() {
         chatContainer.style.display = 'none';
@@ -44,6 +94,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function sendMessage() {
         const userMessage = inputField.value.trim();
         if (userMessage) {
+            const earlier = history.slice();
+            const startedIn = conversation;
             appendMessage(userMessage, 'user');
             inputField.value = '';
             showTyping();
@@ -54,19 +106,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         'X-WP-Nonce': ChatScribe.nonce,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ message: userMessage }),
+                    body: JSON.stringify({ message: userMessage, history: earlier }),
                 })
                 .then(response => response.json())
                 .then(data => {
+                    if (startedIn !== conversation) {
+                        return;
+                    }
                     hideTyping();
-                    if (data.status === 'success') {
+                    if (data.status === 'success' && typeof data.message === 'string') {
                         appendMessage(data.message, 'bot');
+                        // Only completed exchanges are remembered, so turns always alternate.
+                        remember('user', userMessage);
+                        remember('bot', data.message);
                     } else {
                         appendMessage("Sorry, there was an error processing your message.", 'bot');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    if (startedIn !== conversation) {
+                        return;
+                    }
                     hideTyping();
                     appendMessage("Sorry, there was an error processing your message.", 'bot');
                 });
