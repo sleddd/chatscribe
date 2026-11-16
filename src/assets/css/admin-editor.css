@@ -1,0 +1,61 @@
+/* The AI Summary and AI Writer boxes in the post editor's sidebar. */
+
+.chatscribe-editor-box label {
+	display: block;
+	margin-bottom: 4px;
+	font-weight: 600;
+}
+
+.chatscribe-editor-box textarea {
+	resize: vertical;
+}
+
+.chatscribe-editor-box__status:empty {
+	display: none;
+}
+
+.chatscribe-editor-box__status.is-error {
+	color: #b32d2e;
+}
+
+.chatscribe-editor-box.is-busy .chatscribe-editor-box__status::before {
+	content: "";
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	margin-right: 6px;
+	vertical-align: -1px;
+	border: 2px solid currentColor;
+	border-right-color: transparent;
+	border-radius: 50%;
+	animation: chatscribe-editor-spin 0.8s linear infinite;
+}
+
+.chatscribe-editor-box__bullets {
+	margin: 0 0 8px;
+	padding: 8px 10px 8px 26px;
+	list-style: disc;
+	background: #f6f7f7;
+	border-radius: 2px;
+	user-select: text;
+}
+
+.chatscribe-editor-box__bullets li {
+	margin-bottom: 6px;
+}
+
+.chatscribe-editor-box__bullets li:last-child {
+	margin-bottom: 0;
+}
+
+@keyframes chatscribe-editor-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.chatscribe-editor-box.is-busy .chatscribe-editor-box__status::before {
+		animation: none;
+	}
+}

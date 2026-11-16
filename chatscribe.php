@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:     ChatScribe
- * Plugin URI:      
- * Description:     An integrated AI chatbot for WordPress.
+ * Plugin URI:
+ * Description:     A simple AI assistant for WordPress.
  * Author:          Claudette Raynor
  * Author URI:      https://claudetteraynor.info
  * Text Domain:     chatscribe
@@ -15,7 +15,7 @@
 
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
 define( 'CHATSCRIBE_FILE', __FILE__ );

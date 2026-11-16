@@ -1,115 +1,64 @@
 === ChatScribe ===
-Contributors: (this should be a list of wordpress.org userid's)
-Donate link: https://example.com/
-Tags: comments, spam
-Requires at least: 4.5
-Tested up to: 7.1.4
-Requires PHP: 5.6
+Contributors: Claudette Raynor
+Tags: ai, chatbot, assistant, summary, content
+Requires at least: 7.0
+Tested up to: 7.1
+Requires PHP: 7.4
 Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+An AI assistant for your site: a chat for visitors and editors, plus post summaries and AI writing help right in the editor.
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+ChatScribe adds an AI assistant to WordPress that knows your site. It answers questions using your own content, and helps you summarize and write posts without leaving the editor.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+It uses the AI Client built into WordPress, so it works with whichever AI provider you've connected under Settings > Connectors.
 
-A few notes about the sections above:
+= Features =
 
-*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
-*   "Tags" is a comma separated list of tags that apply to the plugin
-*   "Requires at least" is the lowest version that the plugin will work on
-*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
-higher versions... this is just the highest one you've verified.
-*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
-stable.
+* **Site chat** – A chat window on your site where visitors can ask about your posts, pages and products. Signed-in WooCommerce customers can also ask about their own orders.
+* **Admin chat** – A chat in the WordPress admin for your team. It can find drafts and other unpublished content, and link straight to the edit screen.
+* **AI summaries** – A "Summarize" button in the editor sidebar turns a post into a short list of key points, ready to copy into a block. You choose how many points and how long each one can be.
+* **AI writer** – Describe what you want in the editor sidebar, and ChatScribe looks up what your site already has on the subject, then writes a draft. It's added to the end of the post as a group block called "AI Post Content", ready for you to edit.
 
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
+= You stay in control =
 
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
+* Choose which post types, categories and statuses the assistant can use, separately for the site and the admin.
+* Choose which user roles can use each feature.
+* The assistant never shows anyone more than they could already see themselves.
+* Passwords, API keys and other sensitive values are always hidden.
+* The AI writer only uses published content, and it can't create, change or delete anything on its own.
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
-
-e.g.
-
-1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
+1. Upload the `chatscribe` folder to `/wp-content/plugins/`, or install the plugin from the Plugins screen.
+2. Activate ChatScribe.
+3. Connect an AI provider under Settings > Connectors.
+4. Go to Settings > ChatScribe to turn on the features you want and choose what the assistant can use.
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= Do I need an AI account? =
 
-An answer to that question.
+Yes. ChatScribe uses the AI provider you connect in WordPress, so you'll need an account and API key with that provider. Usage is billed by them.
 
-= What about foo bar? =
+= Is my content sent anywhere? =
 
-Answer to foo bar dilemma.
+Yes. When someone uses the chat, a summary or the writer, the relevant content is sent to your AI provider so it can respond. Only content you've allowed in the settings is used.
 
-== Screenshots ==
+How that content is handled is up to your provider, and their privacy and training terms vary. Many providers only use API requests to generate a response, don't train their models on them, and keep only limited logs. It's worth checking your provider's terms to be sure especially if you plan on utilizing this to access customer order and contact information.
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+= Does it work with WooCommerce? =
+
+Yes. The assistant can answer questions about products, customers can ask about their own orders, and your team can look up orders and customers from the admin chat if you allow it.
+
+= Will the AI writer publish posts on its own? =
+
+No. It adds a drafted group of blocks to the post you're editing. Nothing is saved or published until you do it yourself.
 
 == Changelog ==
 
-= 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
-
-== Upgrade Notice ==
-
-= 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
-
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
-
-== Arbitrary section ==
-
-You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
-
-== A brief Markdown Example ==
-
-Ordered list:
-
-1. Some feature
-1. Another feature
-1. Something else about the plugin
-
-Unordered list:
-
-* something
-* something else
-* third thing
-
-Here's a link to [WordPress](https://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: https://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
-
-Markdown uses email style notation for blockquotes and I've been told:
-> Asterisks for *emphasis*. Double it up  for **strong**.
-
-`<?php code(); // goes in backticks ?>`
+= 0.1.0 =
+* First release.

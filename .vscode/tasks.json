@@ -1,0 +1,36 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "js-beautify: current file",
+			"type": "shell",
+			"command": "js-beautify --config .jsbeautifyrc --replace \"${file}\"",
+			"problemMatcher": []
+		},
+		{
+			"label": "js-beautify: plugin JS and CSS",
+			"type": "shell",
+			"command": "js-beautify --config .jsbeautifyrc --replace src/assets/js/*.js && js-beautify --css --config .jsbeautifyrc --replace src/assets/css/*.css",
+			"problemMatcher": []
+		},
+		{
+			"label": "phpcbf: plugin",
+			"type": "shell",
+			"command": "/Users/fastandcurious/.composer/vendor/bin/phpcbf",
+			"problemMatcher": []
+		},
+		{
+			"label": "phpcs: plugin",
+			"type": "shell",
+			"command": "/Users/fastandcurious/.composer/vendor/bin/phpcs --report=emacs --no-colors -q",
+			"problemMatcher": {
+				"owner": "phpcs",
+				"fileLocation": ["relative", "${workspaceFolder}"],
+				"pattern": {
+					"regexp": "^(.+):(\\d+):(\\d+):\\s+(error|warning)\\s+-\\s+(.*)$",
+					"file": 1, "line": 2, "column": 3, "severity": 4, "message": 5
+				}
+			}
+		}
+	]
+}

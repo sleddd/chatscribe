@@ -1,0 +1,26 @@
+{
+	"phpsab.executablePathCS": "/Users/fastandcurious/.composer/vendor/bin/phpcs",
+	"phpsab.executablePathCBF": "/Users/fastandcurious/.composer/vendor/bin/phpcbf",
+	"phpsab.standard": "",
+	"phpsab.autoRulesetSearch": true,
+	"phpsab.snifferEnable": true,
+	"phpsab.snifferMode": "onType",
+	"phpsab.fixerEnable": true,
+	"[php]": {
+		"editor.defaultFormatter": "valeryanm.vscode-phpsab",
+		"editor.formatOnSave": true,
+		"editor.insertSpaces": false,
+		"editor.detectIndentation": false
+	},
+	"[javascript]": {
+		"editor.insertSpaces": false,
+		"editor.detectIndentation": false
+	},
+	"[css]": {
+		"editor.insertSpaces": false,
+		"editor.detectIndentation": false
+	},
+	"files.exclude": {
+		"**/.DS_Store": true
+	}
+}

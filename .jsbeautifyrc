@@ -1,0 +1,16 @@
+{
+	"indent_with_tabs": true,
+	"indent_size": 1,
+	"indent_char": "\t",
+	"end_with_newline": true,
+	"preserve_newlines": true,
+	"max_preserve_newlines": 2,
+	"space_in_paren": true,
+	"space_in_empty_paren": false,
+	"jslint_happy": false,
+	"space_after_anon_function": true,
+	"brace_style": "collapse,preserve-inline",
+	"keep_array_indentation": false,
+	"newline_between_rules": true,
+	"selector_separator_newline": true
+}
