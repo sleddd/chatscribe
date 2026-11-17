@@ -1,5 +1,5 @@
 === ChatScribe ===
-Contributors: Claudette Raynor
+Contributors: Good Work Marketing, Claudette Raynor
 Tags: ai, chatbot, assistant, summary, content
 Requires at least: 7.0
 Tested up to: 7.1

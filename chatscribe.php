@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name:     ChatScribe
- * Plugin URI:
+ * Plugin URI:      https://github.com/Good-Work-Marketing/chatscribe
  * Description:     A simple AI assistant for WordPress.
- * Author:          Claudette Raynor
- * Author URI:      https://claudetteraynor.info
+ * Author:          Good Work Marketing, Claudette Raynor
+ * Author URI:      https://goodworkmarketing.com
  * Text Domain:     chatscribe
  * Domain Path:     /languages
  * Version:         0.1.0
